@@ -1,0 +1,31 @@
+//@version=6
+//soheilsolim
+strategy("RSI Strategy (20/80)", overlay=true)
+
+// ====== RSI ======
+rsiLength = input.int(14, "RSI Length")
+rsiVal = ta.rsi(close, rsiLength)
+
+// ====== BUY / SELL ======
+buySignal  = rsiVal < 20 and rsiVal[1] >= 20
+sellSignal = rsiVal > 80 and rsiVal[1] <= 80
+
+// ====== input ======
+if buySignal and strategy.position_size <= 0
+    strategy.entry("BUY", strategy.long)
+
+if sellSignal and strategy.position_size >= 0
+    strategy.entry("SELL", strategy.short)
+
+// ====== output ======
+if sellSignal
+    strategy.close("BUY")
+if buySignal
+    strategy.close("SELL")
+
+// ====== display ======
+plotshape(buySignal, title="BUY", style=shape.labelup, location=location.belowbar,
+     color=color.green, text="BUY", textcolor=color.white)
+
+plotshape(sellSignal, title="SELL", style=shape.labeldown, location=location.abovebar,
+     color=color.red, text="SELL", textcolor=color.white)
